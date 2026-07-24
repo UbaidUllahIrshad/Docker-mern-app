@@ -1,0 +1,52 @@
+version: '3.8'
+
+# Fixed: indentation was corrected so each service is properly nested under services.
+services:
+  frontend:
+    # Fixed: the image name was kept consistent and the port mapping was corrected.
+    image: ubaid393/mern-frontend:1.0
+    container_name: mern-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+  backend:
+    # Fixed: the backend image name typo was corrected.
+    image: ubaid393/mern-backend:1.0
+    container_name: mern-backend
+    ports:
+      - "5000:5000"
+    environment:
+      # Fixed: the MongoDB connection string now points to the correct service name.
+      - MONGO_URI=mongodb://admin:password@mongodb:27017/mern-database?authSource=admin
+    depends_on:
+      - mongodb
+
+  mongodb:
+    # Fixed: the service name and container name were corrected.
+    image: mongo
+    container_name: mern-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    volumes:
+      - mongodb_data:/data/db
+
+  mongo-express:
+    # Fixed: the service name typo was corrected and the indentation was normalized.
+    image: mongo-express
+    container_name: mern-mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data:
